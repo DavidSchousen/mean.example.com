@@ -12,6 +12,10 @@ var config = require('./config.dev');
 
 var app = express();
 var mongoose = require('mongoose');
+//~line 7 after mongoose
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+var passport = require('passport');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
