@@ -4,20 +4,19 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
-
 var LocalStrategy = require('passport-local').Strategy;
+
 var Users = require('./models/users');
+
+var apiAuthRouter = require('./routes/api/auth');
+var apiUsersRouter = require('./routes/api/users');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var apiAuthRouter = require('./routes/api/auth');
 var config = require('./config.dev');
 
-
-var apiUsersRouter = require('./routes/api/users');
 
 var app = express();
 
@@ -49,7 +48,9 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 passport.use(Users.createStrategy());
+
 passport.serializeUser(function (user, done) {
  done(null, {
    id: user._id,
@@ -59,10 +60,15 @@ passport.serializeUser(function (user, done) {
    last_name: user.last_name
  });
 });
+
 passport.deserializeUser(function (user, done) {
  done(null, user);
 });
+
+
+app.use('/', indexRouter);
 app.use('/api/users', apiUsersRouter);
+app.use('/api/auth', apiAuthRouter);
 app.use('/users', usersRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -77,7 +83,7 @@ app.use(function (err, req, res, next) {
  res.status(err.status || 500);
  res.render('error');
 });
-app.use('/api/auth', apiAuthRouter);
-module.exports = app;
+
 //Connect to MongoDB
 mongoose.connect(config.mongodb, { useNewUrlParser: true });
+module.exports = app;
