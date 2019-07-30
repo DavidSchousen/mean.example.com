@@ -70,7 +70,6 @@ app.use(function(req,res,next){
   next();
 });
 
-
 //Session based access control
 app.use(function(req,res,next){
   //Uncomment the following line to allow access to everything.
