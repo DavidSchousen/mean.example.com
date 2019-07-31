@@ -1,21 +1,21 @@
 var usersApp = (function() {
+
   function viewUsers(){
 
     let uri = `${window.location.origin}/api/users`;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', uri);
-  
+
     xhr.setRequestHeader(
       'Content-Type',
       'application/json; charset=UTF-8'
     );
-  
+
     xhr.send();
-  
+
     xhr.onload = function(){
       let app = document.getElementById('app');
       let data = JSON.parse(xhr.response);
-      //console.log(data); //shows data
       let users = data.users;
       let table = '';
       let rows = '';
@@ -57,12 +57,12 @@ var usersApp = (function() {
 
       //Append the HTML to the #app
       app.innerHTML = table;
-
     }
   }
+
   function createUser(){
     var app = document.getElementById('app');
-  
+
     var form =  `
         <div class="card">
           <div class="card-header clearfix">
@@ -74,31 +74,31 @@ var usersApp = (function() {
           <div class="card-body">
             <form id="createUser" class="card-body">
               <div id="formMsg" class="alert alert-danger text-center">Your form has errors</div>
-  
+
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="first_name">First Name</label>
                   <input type="text" id="first_name" name="first_name" class="form-control" required>
                 </div>
-  
+
                 <div class="form-group col-md-6">
                   <label for="last_name">Last Name</label>
                   <input type="text" id="last_name" name="last_name" class="form-control" required>
                 </div>
               </div>
-  
+
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="username">Username</label>
                   <input type="text" id="username" name="username" class="form-control" required>
                 </div>
-  
+
                 <div class="form-group col-md-6">
                   <label for="email">Email</label>
                   <input type="email" id="email" name="email" class="form-control" required>
                 </div>
               </div>
-  
+
               <div class="text-right">
                 <input type="submit" value="Submit" class="btn btn-lg btn-primary btn-sm-block">
               </div>
@@ -106,61 +106,29 @@ var usersApp = (function() {
           </div>
         </div>
     `;
-  
-    function processRequest(formId, url, method){
-      let form = document.getElementById(formId);
-      form.addEventListener('submit', function(e){
-        e.preventDefault();
-  
-        let formData = new FormData(form);
-        let uri = `${window.location.origin}${url}`;
-        let xhr = new XMLHttpRequest();
-        xhr.open(method, uri);
-  
-        xhr.setRequestHeader(
-          'Content-Type',
-          'application/json; charset=UTF-8'
-        );
-  
-        let object = {};
-        formData.forEach(function(value, key){
-          object[key]=value;
-        });
-  
-        xhr.send(JSON.stringify(object));
-        xhr.onload = function(){
-          let data = JSON.parse(xhr.response);
-          if(data.success===true){
-            window.location.href = '/';
-          }else{
-            document.getElementById('formMsg').style.display='block';
-          }
-        }
-      });
-    }
 
     app.innerHTML=form;
+    processRequest('createUser', '/api/users', 'POST');
   }
-  
 
   function viewUser(id){
 
     let uri = `${window.location.origin}/api/users/${id}`;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', uri);
-  
+
     xhr.setRequestHeader(
       'Content-Type',
       'application/json; charset=UTF-8'
     );
-  
+
     xhr.send();
-  
+
     xhr.onload = function(){
       let app = document.getElementById('app');
       let data = JSON.parse(xhr.response);
       let card = '';
-  
+
       card = `<div class="card">
         <div class="card-header clearfix">
           <h2 class="h3 float-left">${data.user.first_name} ${data.user.last_name}</h2>
@@ -173,7 +141,7 @@ var usersApp = (function() {
           <div>${data.user.email}</div>
         </div>
       </div>`;
-  
+
       app.innerHTML = card;
     }
   }
@@ -183,18 +151,18 @@ var usersApp = (function() {
     let uri = `${window.location.origin}/api/users/${id}`;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', uri);
-  
+
     xhr.setRequestHeader(
       'Content-Type',
       'application/json; charset=UTF-8'
     );
-  
+
     xhr.send();
-  
+
     xhr.onload = function(){
       let app = document.getElementById('app');
       let data = JSON.parse(xhr.response);
-    
+
       var form =  `
         <div class="card">
           <div class="card-header clearfix">
@@ -207,31 +175,31 @@ var usersApp = (function() {
             <form id="editUser" class="card-body">
               <input type="hidden" id="_id" name="_id" value="${data.user._id}">
               <div id="formMsg" class="alert alert-danger text-center">Your form has errors</div>
-    
+
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="first_name">First Name</label>
                   <input type="text" id="first_name" name="first_name" class="form-control" value="${data.user.first_name}" required>
                 </div>
-    
+
                 <div class="form-group col-md-6">
                   <label for="last_name">Last Name</label>
                   <input type="text" id="last_name" name="last_name" class="form-control" value="${data.user.last_name}" required>
                 </div>
               </div>
-    
+
               <div class="row">
                 <div class="form-group col-md-6">
                   <label for="username">Username</label>
                   <input type="text" id="username" name="username" class="form-control" value="${data.user.username}" required>
                 </div>
-    
+
                 <div class="form-group col-md-6">
                   <label for="email">Email</label>
                   <input type="email" id="email" name="email" class="form-control" value="${data.user.email}" required>
                 </div>
               </div>
-    
+
               <div class="text-right">
                 <input type="submit" value="Submit" class="btn btn-lg btn-primary btn-sm-block">
               </div>
@@ -239,11 +207,12 @@ var usersApp = (function() {
           </div>
         </div>
         <div>
-          <a href="#delete-${data.user._id}" class="text-danger">Delete</a>
+          <a href="#delete-${data.user._id}" class="btn text-danger">Delete</a>
         </div>
       `;
-    
+      
       app.innerHTML=form;
+
       processRequest('editUser', '/api/users', 'PUT');
     }
   }
@@ -253,79 +222,179 @@ var usersApp = (function() {
     let uri = `${window.location.origin}/api/users/${id}`;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', uri);
-  
+
     xhr.setRequestHeader(
       'Content-Type',
       'application/json; charset=UTF-8'
     );
-  
+
     xhr.send();
-  
+
     xhr.onload = function(){
       let app = document.getElementById('app');
       let data = JSON.parse(xhr.response);
       let card = '';
-  
+
       card = `<div class="card bg-transparent border-danger text-danger bg-danger">
         <div class="card-header bg-transparent border-danger">
-          <h2 class="h3 text-center">Your About to Delete a User</h2>
+          <h2 class="h3 text-center">You Are About to Delete a User</h2>
         </div>
         <div class="card-body text-center">
           <div>
             Are you sure you want to delete
-            <strong>${data.user.first_name} ${data.user.last_name}</strong>
+            <strong>${data.user.first_name} ${data.user.last_name}</strong>?
           </div>
-  
+
           <div>Username: <strong>${data.user.username}</strong></div>
           <div>Email: <strong>${data.user.email}</strong></div>
-  
+
           <div class="text-center">
             <br>
-            <a class="btn btn-lg btn-danger text-white">
+            <a onclick="usersApp.deleteUser('${data.user._id}');" class="btn btn-lg btn-danger text-white">
+            Yes delete ${data.user.username}
+            </a>
+            <br><br><br>
+            <a class="btn text-muted" href="#users">cancel</a>
+            
+            <a>
+              h1 Create an Article
+              form(method='post' action='/users/articles')
+                div
+                  label(for='title') Title
+                  input(type='text' name='title' id='title')
+                div
+                  label(for='slug') Slug
+                  input(type='text' name='slug' id='slug')
+                div
+                  label(for='keywords') Keywords
+                  input(type='text' name='keywords' id='keywords')
+                div
+                  label(for='description') Description
+                  input(type='text' name='description' id='description')
+                div
+                  label(for='body') Body
+                  input(type='text' name='body' id='body')
+                div
+                  label(for='created') Created
+                  input(type='text' name='created' id='created')
+                div
+                  label(for='modified') Modified
+                  input(type='text' name='modified' id='modified')
+                div
+                  label(for='published') Published
+                  input(type='text' name='published' id='published')
+                div
+                  input(type='submit' value='submit')"usersApp.deleteUser('${data.user._id}');" class="btn btn-lg btn-danger text-white">
               Yes delete ${data.user.username}
             </a>
+
+            <br><br><br>
+            <a class="btn text-muted" href="#users">cancel</a>
           </div>
-  
+
         </div>
       </div>`;
-  
+
       app.innerHTML = card;
     }
   }
+  function deleteUser(id){
+
+    let uri = `${window.location.origin}/api/users/${id}`;
+    let xhr = new XMLHttpRequest();
+    xhr.open('DELETE', uri);
+
+    xhr.setRequestHeader(
+      'Content-Type',
+      'application/json; charset=UTF-8'
+    );
+
+    xhr.send();
+
+    xhr.onload = function(){
+      let data = JSON.parse(xhr.response);
+      if(data.success === true){
+        window.location.hash = '#';
+      }else{
+        alert('Unknown error, the user could not be deleted');
+      }
+
+    }
+
+  }
+
+  function processRequest(formId, url, method){
+    let form = document.getElementById(formId);
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+
+      let formData = new FormData(form);
+      let uri = `${window.location.origin}${url}`;
+      let xhr = new XMLHttpRequest();
+      xhr.open(method, uri);
+
+      xhr.setRequestHeader(
+        'Content-Type',
+        'application/json; charset=UTF-8'
+      );
+
+      let object = {};
+      formData.forEach(function(value, key){
+        object[key]=value;
+      });
+
+      xhr.send(JSON.stringify(object));
+
+      xhr.onload = function(){
+        let data = JSON.parse(xhr.response);
+        if(data.success===true){
+          window.location.href = '/users/app';
+        }else{
+          document.getElementById('formMsg').style.display='block';
+        }
+      }
+
+    });
+  }
 
   return {
-  load: function(){
-    let hash = window.location.hash;
-    let hashArray = hash.split('-');
-  
-    switch(hashArray[0]){
-      case '#create':
-        createUser();
-        processRequest('createUser', '/api/users', 'POST');
-        break;
-    
-      case '#view':
-        viewUser(hashArray[1]);
-        // console.log('VIEW');
-        break;
-  
-      case '#edit':
-        editUser(hashArray[1]);
-        // console.log('EDIT');
-        break;
-  
-      case '#delete':
-        deleteView(hashArray[1]);
-        // console.log('DELETE');
-        break;
-  
-      default:
-        viewUsers();
-        break;
+
+    deleteUser: function(id){
+      deleteUser(id);
+    },
+
+    load: function(){
+      let hash = window.location.hash;
+      let hashArray = hash.split('-');
+
+      switch(hashArray[0]){
+        case '#create':
+          createUser();
+          break;
+
+        case '#view':
+          viewUser(hashArray[1]);
+          break;
+
+        case '#edit':
+          editUser(hashArray[1]);
+          break;
+
+        case '#delete':
+          deleteView(hashArray[1]);
+          break;
+
+        default:
+          viewUsers();
+          break;
+      }
     }
-  }  
-}
+  }
 
 })();
 
 usersApp.load();
+
+window.addEventListener("hashchange", function(){
+  usersApp.load();
+});

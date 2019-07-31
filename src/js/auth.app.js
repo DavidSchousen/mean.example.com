@@ -30,7 +30,6 @@ var authApp = (function() {
     var app = document.getElementById('app');
 
     var form =  `
-
         <div class="card login-form">
           <form id="registrationForm" class="card-body">
             <h1 class="card-title text-center">Create an Account</h1>
@@ -53,7 +52,7 @@ var authApp = (function() {
 
             <div class="form-group">
               <label for="email">Email</label>
-              <input type="email" id="email" name="email" class="form-control" required>
+              <input type="text" id="email" name="email" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -78,20 +77,26 @@ var authApp = (function() {
 
   function postRequest(formId, url){
     let form = document.getElementById(formId);
+
     form.addEventListener('submit', function(e){
+
       e.preventDefault();
+
       let formData = new FormData(form);
       let uri = `${window.location.origin}${url}`;
       let xhr = new XMLHttpRequest();
       xhr.open('POST', uri);
+
       xhr.setRequestHeader(
         'Content-Type',
         'application/json; charset=UTF-8'
       );
+
       let object = {};
       formData.forEach(function(value, key){
         object[key]=value;
       });
+
       xhr.send(JSON.stringify(object));
       xhr.onload = function(){
         let data = JSON.parse(xhr.response);
@@ -104,26 +109,25 @@ var authApp = (function() {
     });
   }
 
-
   return {
     load: function(){
-  
+
       switch(window.location.hash){
         case '#register':
           registrationForm();
           postRequest('registrationForm', '/api/auth/register');
           validate.registrationForm();
           break;
-  
+
         default:
           loginForm();
           postRequest('loginForm', '/api/auth/login');
           break;
       }
-  
+
     }
   }
-  
+
 })();
 
 var validate = (function() {
@@ -146,12 +150,14 @@ var validate = (function() {
       document.querySelector('#registrationForm input[type="submit"]').addEventListener(
         'click',
         function(){
+        validateEmail();
         confirmPasswordMatch();
       });
     }
   }
 
 })();
+
 
 authApp.load();
 
